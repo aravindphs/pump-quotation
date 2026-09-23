@@ -1,0 +1,4 @@
+node_modules/
+.shims/
+*.log
+.DS_Store

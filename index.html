@@ -1,0 +1,1666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>N Square Energies - Solar Pump Quotation Generator</title>
+<style>
+:root{
+  --ink:#0f1b16; --muted:#5b6b64; --line:#e2e8e4; --bg:#f4f7f5; --card:#ffffff;
+  --green:#0f6b4c; --green-2:#0a4d38; --navy:#0b2e4e; --accent:#0f6b4c;
+  --danger:#b3261e; --danger-bg:#fdecea; --warn-bg:#fff4e5; --warn-ink:#8a5a00;
+  --ok-bg:#eaf6ef; --sent-bg:#eef2ff; --rej-bg:#fdecea; --draft-bg:#f1f3f2;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --ink:#e8f1ec; --muted:#9db3aa; --line:#233a30; --bg:#0d1512; --card:#101c17;
+    --green:#3ecb95; --green-2:#2fae7e; --navy:#7fb2df; --accent:#3ecb95;
+    --danger:#ff6b60; --danger-bg:#3a1613; --warn-bg:#3a2a06; --warn-ink:#ffcf7a;
+    --ok-bg:#123324; --sent-bg:#1b2440; --rej-bg:#3a1613; --draft-bg:#1a231e;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e8f1ec; --muted:#9db3aa; --line:#233a30; --bg:#0d1512; --card:#101c17;
+  --green:#3ecb95; --green-2:#2fae7e; --navy:#7fb2df; --accent:#3ecb95;
+  --danger:#ff6b60; --danger-bg:#3a1613; --warn-bg:#3a2a06; --warn-ink:#ffcf7a;
+  --ok-bg:#123324; --sent-bg:#1b2440; --rej-bg:#3a1613; --draft-bg:#1a231e;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%;}
+*{box-sizing:border-box;}
+body{
+  margin:0; min-height:100%; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  font-size:15px; line-height:1.45;
+}
+button{font-family:inherit;}
+.hidden{display:none;}
+.muted{color:var(--muted);}
+.accent{color:var(--accent);}
+.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.max-w-6xl{max-width:1152px;}
+.max-w-3xl{max-width:768px;}
+.mx-auto{margin-left:auto;margin-right:auto;}
+.min-w-0{min-width:0;}
+.w-full{width:100%;}
+.flex{display:flex;}
+.grid{display:grid;}
+.hidden{display:none;}
+.items-center{align-items:center;}
+.items-start{align-items:flex-start;}
+.items-baseline{align-items:baseline;}
+.justify-between{justify-content:space-between;}
+.justify-center{justify-content:center;}
+.gap-1\.5{gap:6px;}
+.gap-2{gap:8px;}
+.gap-2\.5{gap:10px;}
+.gap-3{gap:12px;}
+.gap-4{gap:16px;}
+.gap-6{gap:24px;}
+.flex-wrap{flex-wrap:wrap;}
+.flex-1{flex:1;}
+.space-y-3>*+*{margin-top:12px;}
+.space-y-4>*+*{margin-top:16px;}
+.px-4{padding-left:16px;padding-right:16px;}
+.py-1{padding-top:4px;padding-bottom:4px;}
+.py-4{padding-top:16px;padding-bottom:16px;}
+.py-5{padding-top:20px;padding-bottom:20px;}
+.p-3{padding:12px;}
+.p-4{padding:16px;}
+.p-5{padding:20px;}
+.p-8{padding:32px;}
+.pt-2{padding-top:8px;}
+.mt-1{margin-top:4px;}
+.mt-2{margin-top:8px;}
+.mt-3{margin-top:12px;}
+.mt-4{margin-top:16px;}
+.mb-1{margin-bottom:4px;}
+.mb-2{margin-bottom:8px;}
+.mb-3{margin-bottom:12px;}
+.mb-4{margin-bottom:16px;}
+.mb-5{margin-bottom:20px;}
+.mb-6{margin-bottom:24px;}
+.pb-28{padding-bottom:112px;}
+.h-16{height:64px;}
+.h-9{height:36px;}
+.w-9{width:36px;}
+.text-right{text-align:right;}
+.text-center{text-align:center;}
+.text-sm{font-size:13px;}
+.text-xs{font-size:11.5px;}
+.text-lg{font-size:18px;}
+.text-2xl{font-size:26px;}
+.text-3xl{font-size:30px;}
+.font-medium{font-weight:500;}
+.font-semibold{font-weight:600;}
+.font-bold{font-weight:700;}
+.font-extrabold{font-weight:800;}
+.relative{position:relative;}
+.absolute{position:absolute;}
+.left-3{left:12px;}
+.right-3{right:12px;}
+.top-1\/2{top:50%;}
+.-translate-y-1\/2{transform:translateY(-50%);}
+.overflow-x-auto{overflow-x:auto;}
+.cursor-pointer{cursor:pointer;}
+.object-contain{object-fit:contain;}
+.rounded-xl{border-radius:12px;}
+@media (min-width:640px){
+  .sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .sm\:col-span-2{grid-column:span 2/span 2;}
+  .sm\:inline{display:inline;}
+  .sm\:py-8{padding-top:32px;padding-bottom:32px;}
+}
+@media (min-width:768px){
+  .md\:hidden{display:none;}
+  .md\:block{display:block;}
+}
+@media (min-width:1024px){
+  .lg\:hidden{display:none;}
+  .lg\:block{display:block;}
+  .lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .lg\:grid-cols-\[minmax\(0\,1fr\)_400px\]{grid-template-columns:minmax(0,1fr) 400px;}
+  .lg\:sticky{position:sticky;}
+  .lg\:top-20{top:80px;}
+}
+@media (min-width:1280px){
+  .xl\:grid-cols-\[minmax\(0\,1fr\)_520px\]{grid-template-columns:minmax(0,1fr) 520px;}
+}
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr));}
+
+/* ---- top bar ---- */
+.topbar{position:sticky; top:0; z-index:30; background:var(--card); border-bottom:1px solid var(--line); padding-top:env(safe-area-inset-top,0px);}
+.brand-name{font-weight:800; letter-spacing:.2px; font-size:16px;}
+.navbtn{display:flex; align-items:center; gap:6px; padding:8px 12px; border-radius:10px; border:none; background:transparent; color:var(--muted); font-weight:600; font-size:13px; cursor:pointer;}
+.navbtn span:last-child{display:none;}
+.navbtn.on{background:var(--ok-bg); color:var(--accent);}
+@media (min-width:640px){ .navbtn span:last-child{display:inline;} }
+
+/* ---- layout basics ---- */
+.page-title{font-size:22px; font-weight:800; margin:0;}
+.card{background:var(--card); border:1px solid var(--line); border-radius:14px;}
+.sec-title{font-size:15px; font-weight:700; margin:0;}
+.sec-h{font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:14px 0 6px;}
+
+/* ---- form elements ---- */
+.lbl{display:block; font-size:12.5px; font-weight:600; color:var(--muted); margin-bottom:4px;}
+.req{color:var(--danger);}
+.inp{width:100%; border:1px solid var(--line); background:var(--bg); color:var(--ink); border-radius:10px; padding:10px 12px; font-size:15px; outline:none; transition:border-color .12s;}
+.inp:focus{border-color:var(--accent); background:var(--card);}
+.inp-err{border-color:var(--danger); background:var(--danger-bg);}
+textarea.inp{resize:vertical; font-family:inherit;}
+.fix{position:absolute; top:50%; transform:translateY(-50%); color:var(--muted); font-size:14px; pointer-events:none;}
+.hint{display:block; font-size:11.5px; color:var(--muted); margin-top:4px;}
+.err{display:block; font-size:11.5px; color:var(--danger); margin-top:4px; font-weight:600;}
+select.inp{-webkit-appearance:none;appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%235b6b64' stroke-width='2'><path d='M4 6l4 4 4-4'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; padding-right:30px;}
+.link{border:none; background:none; color:var(--accent); font-weight:600; font-size:13px; cursor:pointer; padding:0;}
+
+/* status pill colours reused on <select> */
+.st-Draft{background:var(--draft-bg);}
+.st-Sent{background:var(--sent-bg);}
+.st-Accepted{background:var(--ok-bg); color:var(--accent); font-weight:700;}
+.st-Rejected{background:var(--rej-bg); color:var(--danger); font-weight:700;}
+
+/* ---- buttons ---- */
+.btn{display:inline-flex; align-items:center; gap:7px; padding:10px 16px; border-radius:10px; font-weight:700; font-size:14px; border:1px solid transparent; cursor:pointer; white-space:nowrap;}
+.btn:disabled{opacity:.55; cursor:default;}
+.btn-primary{background:var(--green); color:#fff;}
+.btn-primary:hover:not(:disabled){background:var(--green-2);}
+.btn-outline{background:var(--card); border-color:var(--line); color:var(--ink);}
+.btn-outline:hover{border-color:var(--accent);}
+.btn-ghost{background:transparent; border-color:transparent; color:var(--muted);}
+.btn-ghost:hover{color:var(--ink);}
+.btn-danger{background:var(--danger); color:#fff;}
+.btn-sm{padding:6px 10px; font-size:12.5px; border-radius:8px;}
+
+/* ---- tiles (dashboard) ---- */
+.tile{display:flex; flex-direction:column; align-items:flex-start; gap:6px; text-align:left; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; cursor:pointer; color:var(--ink);}
+.tile-primary{background:linear-gradient(135deg,var(--green),var(--green-2)); color:#fff; border-color:transparent;}
+.tile-primary .tile-s{color:rgba(255,255,255,.85);}
+.tile-t{font-weight:800; font-size:16px;}
+.tile-s{font-size:12.5px; color:var(--muted);}
+
+/* ---- data table (desktop list) ---- */
+.dt{width:100%; border-collapse:collapse; font-size:13.5px;}
+.dt th{text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; color:var(--muted); padding:12px 14px; border-bottom:1px solid var(--line); white-space:nowrap;}
+.dt td{padding:12px 14px; border-bottom:1px solid var(--line); vertical-align:middle;}
+.dt tr:last-child td{border-bottom:none;}
+
+/* ---- summary box ---- */
+.summary{background:var(--bg); border:1px solid var(--line);}
+.bd{border-color:var(--line);}
+
+/* ---- segmented control (mobile form/preview) ---- */
+.seg{background:var(--bg); border:1px solid var(--line); border-radius:12px; padding:3px;}
+.seg button{display:flex; align-items:center; justify-content:center; gap:6px; padding:9px; border:none; background:transparent; border-radius:9px; font-weight:700; font-size:13px; color:var(--muted); cursor:pointer;}
+.seg button.on{background:var(--card); color:var(--accent); box-shadow:0 1px 2px rgba(0,0,0,.08);}
+
+/* ---- sticky action bar ---- */
+.actionbar{position:fixed; left:0; right:0; bottom:0; background:var(--card); border-top:1px solid var(--line); padding:10px 0; padding-bottom:calc(10px + env(safe-area-inset-bottom,0px)); z-index:20;}
+
+/* ---- banner ---- */
+.banner{display:flex; align-items:flex-start; gap:8px; padding:12px 14px; border-radius:12px; font-size:13px;}
+.banner-warn{background:var(--warn-bg); color:var(--warn-ink);}
+
+/* ---- toast ---- */
+.toast{position:fixed; left:50%; bottom:calc(84px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:999px; font-size:13.5px; font-weight:600; z-index:60; box-shadow:0 8px 24px rgba(0,0,0,.25); animation:toastin .18s ease-out; max-width:88vw; text-align:center;}
+.toast-err{background:var(--danger);}
+@keyframes toastin{from{opacity:0; transform:translate(-50%,8px);} to{opacity:1; transform:translate(-50%,0);}}
+
+/* ---- modal ---- */
+.modal-bg{position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:70; padding:16px;}
+.modal{width:100%; max-width:480px; max-height:86vh; overflow:auto;}
+
+/* ---- logo box (settings) ---- */
+.logo-box{width:72px; height:72px; border:1px dashed var(--line); border-radius:12px; display:flex; align-items:center; justify-content:center; overflow:hidden; background:var(--bg);}
+.logo-box img{max-width:100%; max-height:100%; object-fit:contain;}
+
+/* =========================================================
+   A4 QUOTATION SHEET
+   ========================================================= */
+.paper-frame{overflow:hidden; box-shadow:0 4px 24px rgba(0,0,0,.12); border-radius:4px;}
+.sheet{
+  width:794px; height:1123px; background:#ffffff; color:#16211c;
+  padding:34px 40px 26px; font-family:Georgia,'Times New Roman',serif;
+  display:flex; flex-direction:column;
+}
+.sh-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; border-bottom:3px solid #0f6b4c; padding-bottom:12px;}
+.sh-brand{display:flex; align-items:center; gap:12px;}
+.sh-logo{width:44px; height:44px; object-fit:contain;}
+.sh-name{font-size:20px; font-weight:700; color:#0a4d38; letter-spacing:.02em; font-family:Arial,Helvetica,sans-serif;}
+.sh-unit{font-size:10.5px; color:#55655e; font-style:italic; font-family:Arial,Helvetica,sans-serif;}
+.sh-contact{text-align:right; font-size:9.5px; color:#55655e; font-family:Arial,Helvetica,sans-serif; line-height:1.5;}
+.sh-title{text-align:center; font-size:14.5px; font-weight:700; letter-spacing:.06em; color:#0b2e4e; margin:12px 0 8px; font-family:Arial,Helvetica,sans-serif;}
+.sh-meta{display:flex; justify-content:space-between; font-size:10.5px; background:#f4f7f5; border-radius:6px; padding:7px 14px; font-family:Arial,Helvetica,sans-serif;}
+.sh-meta .k{color:#5b6b64; margin-right:5px;}
+.sh-meta .v{font-weight:700; color:#16211c;}
+.sh-body{flex:1; font-family:Arial,Helvetica,sans-serif;}
+.cust{display:grid; grid-template-columns:1fr 1fr; gap:4px 18px; font-size:10.5px; background:#f9fbfa; border:1px solid #e2e8e4; border-radius:6px; padding:9px 14px;}
+.cust .span2{grid-column:1/-1;}
+.cust .k{display:block; color:#5b6b64; font-size:9px; text-transform:uppercase; letter-spacing:.03em;}
+.cust .v{display:block; font-weight:600; color:#16211c;}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+.tb{width:100%; border-collapse:collapse; font-size:10px; margin-top:2px;}
+.tb th{background:#0f6b4c; color:#fff; text-align:left; padding:5px 8px; font-size:9px; text-transform:uppercase; letter-spacing:.03em;}
+.tb th.r{text-align:right;}
+.tb td{padding:5px 8px; border-bottom:1px solid #e2e8e4; color:#33403a;}
+.tb td.r{text-align:right;}
+.tb td.b{font-weight:700; color:#16211c;}
+.tb .cap{display:block; font-size:8px; color:#8a938d; font-weight:400;}
+.tb tr.tot td{background:#e9f4ef; font-weight:800; font-size:12.5px; color:#0a4d38; border-bottom:none; padding-top:7px; padding-bottom:7px;}
+.tb tr.sum td{font-weight:800; color:#16211c; border-top:1.5px solid #16211c; border-bottom:none;}
+.note{font-size:8.5px; color:#8a938d; font-style:italic; margin-top:4px;}
+.terms{font-size:9px; color:#33403a; column-count:1; margin-top:2px;}
+.terms .t{display:flex; gap:5px; padding:1.5px 0;}
+.terms .t b{flex-shrink:0;}
+.sign{display:flex; justify-content:flex-end; margin-top:16px;}
+.sign .fo{font-size:10px; font-weight:700; margin-bottom:26px;}
+.sign .line{font-size:9.5px; border-top:1px solid #16211c; padding-top:3px; width:170px; text-align:center; color:#33403a;}
+.sh-foot{display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid #e2e8e4; padding-top:8px; font-size:8.5px; color:#5b6b64; font-family:Arial,Helvetica,sans-serif;}
+.sh-foot b{color:#0a4d38;}
+
+/* on-screen: hide the full-size print root, show only the scaled preview */
+#print-root{position:fixed; left:-99999px; top:0; z-index:-1;}
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+@media print{
+  @page{ size:A4; margin:0; }
+  html,body{ background:#fff !important; }
+  body *{ visibility:hidden !important; }
+  #print-root, #print-root *{ visibility:visible !important; }
+  #print-root{ position:static !important; left:0 !important; z-index:1 !important; }
+  .sheet{ box-shadow:none !important; width:210mm !important; height:297mm !important; margin:0 !important; }
+}
+
+</style>
+</head>
+<body>
+<div id="app-root"></div>
+<div id="print-root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(() => {
+  var __create = Object.create;
+  var __defProp = Object.defineProperty;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getProtoOf = Object.getPrototypeOf;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  var __commonJS = (cb, mod) => function __require() {
+    try {
+      return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    } catch (e) {
+      throw mod = 0, e;
+    }
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+    }
+    return to;
+  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    // If the importer is in node compatibility mode or this is not an ESM
+    // file that has been converted to a CommonJS file using a Babel-
+    // compatible transform (i.e. "__esModule" has not been set), then set
+    // "default" to the CommonJS "module.exports" for node compatibility.
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
+
+  // .shims/react.js
+  var require_react = __commonJS({
+    ".shims/react.js"(exports, module) {
+      module.exports = window.React;
+    }
+  });
+
+  // .shims/react-dom-client.js
+  var require_react_dom_client = __commonJS({
+    ".shims/react-dom-client.js"(exports, module) {
+      module.exports = window.ReactDOM;
+    }
+  });
+
+  // .shims/react-dom.js
+  var require_react_dom = __commonJS({
+    ".shims/react-dom.js"(exports, module) {
+      module.exports = window.ReactDOM;
+    }
+  });
+
+  // .shims/jsx-runtime.js
+  var require_jsx_runtime = __commonJS({
+    ".shims/jsx-runtime.js"(exports, module) {
+      var R = window.React;
+      module.exports = { jsx: R.createElement, jsxs: R.createElement, Fragment: R.Fragment };
+    }
+  });
+
+  // src/app.tsx
+  var import_react = __toESM(require_react());
+  var import_client = __toESM(require_react_dom_client());
+  var import_react_dom = __toESM(require_react_dom());
+
+  // src/logo.ts
+  var LOGO = "data:image/png;base64,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";
+  var logo_default = LOGO;
+
+  // src/app.tsx
+  var import_jsx_runtime = __toESM(require_jsx_runtime());
+  var STATUSES = ["Draft", "Sent", "Accepted", "Rejected"];
+  var DEFAULT_TERMS = [
+    "Quotation validity is {validity} days from the quotation date.",
+    "Prices are subject to applicable taxes.",
+    "80% advance payment is required before material procurement / commencement of work.",
+    "Remaining 20% is payable after installation and commissioning.",
+    "Final pump and solar PV sizing is subject to site conditions and technical feasibility.",
+    "Civil work or additional work outside the quotation will be charged separately.",
+    "Warranty is subject to respective manufacturer's terms and conditions.",
+    "Delivery and installation timelines will be confirmed after order confirmation."
+  ].join("\n");
+  var DEFAULT_SETTINGS = {
+    companyName: "N SQUARE ENERGIES",
+    unitLine: "A Unit of ZetaCorp Solutions Private Limited",
+    address: "Coimbatore, Tamil Nadu, India",
+    phone: "8838098525",
+    email: "",
+    gstin: "",
+    logo: logo_default,
+    prefix: "NSE/SP",
+    startNumber: 1,
+    validityDays: 15,
+    numFormat: "en-IN",
+    warrantyPump: "2 Years",
+    warrantyPanel: "30 Years",
+    warrantyDrive: "2 Years",
+    terms: DEFAULT_TERMS,
+    goodsPct: 70,
+    goodsGst: 5,
+    serviceGst: 18
+  };
+  var KEYS = { quotes: "nse_sp_quotations_v1", settings: "nse_sp_settings_v1" };
+  function loadJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+  function saveJSON(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  function storageWorks() {
+    try {
+      localStorage.setItem("nse_test", "1");
+      localStorage.removeItem("nse_test");
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  var uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  var pad2 = (n) => String(n).padStart(2, "0");
+  function todayISO() {
+    const d = /* @__PURE__ */ new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+  function addDays(iso, days) {
+    const [y, m, d] = iso.split("-").map(Number);
+    const dt = new Date(y, m - 1, d + days);
+    return dt.getFullYear() + "-" + pad2(dt.getMonth() + 1) + "-" + pad2(dt.getDate());
+  }
+  function fmtDate(iso) {
+    const [y, m, d] = iso.split("-");
+    return d + "/" + m + "/" + y;
+  }
+  function num(s) {
+    if (typeof s === "number") return s;
+    const t = String(s).replace(/,/g, "").trim();
+    if (t === "") return NaN;
+    return Number(t);
+  }
+  var round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+  var round3 = (n) => Math.round((n + Number.EPSILON) * 1e3) / 1e3;
+  function autoKw(wattage, qty) {
+    const w = num(wattage);
+    const n = num(qty);
+    if (!(w > 0 && n > 0)) return "";
+    return String(round3(w * n / 1e3));
+  }
+  function normMobile(raw) {
+    let d = raw.replace(/\D/g, "");
+    if (d.length === 12 && d.startsWith("91")) d = d.slice(2);
+    if (d.length === 11 && d.startsWith("0")) d = d.slice(1);
+    return /^[6-9]\d{9}$/.test(d) ? d : "";
+  }
+  function showMobile(raw) {
+    const m = normMobile(raw);
+    return m ? "+91 " + m.slice(0, 5) + " " + m.slice(5) : raw;
+  }
+  function calc(priceStr, s) {
+    const price = num(priceStr);
+    if (!(price > 0)) return { price: 0, gst: 0, total: 0, advance: 0, balance: 0 };
+    const goodsValue = price * s.goodsPct / 100;
+    const goodsGst = goodsValue * s.goodsGst / 100;
+    const serviceValue = price * (100 - s.goodsPct) / 100;
+    const serviceGst = serviceValue * s.serviceGst / 100;
+    const gst = round2(goodsGst + serviceGst);
+    const total = round2(price + gst);
+    const advance = round2(total * 80 / 100);
+    const balance = round2(total - advance);
+    return { price: round2(price), gst, total, advance, balance };
+  }
+  function money(n, dec, locale) {
+    return "\u20B9" + n.toLocaleString(locale, { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+  function decFor(values) {
+    return values.some((v) => !Number.isInteger(v)) ? 2 : 0;
+  }
+  function nextNumber(quotes, s, dateISO) {
+    const base = s.prefix + "/" + dateISO.slice(0, 4) + "/";
+    let max = 0;
+    for (const q of quotes) {
+      if (q.number.startsWith(base)) {
+        const n = parseInt(q.number.slice(base.length), 10);
+        if (!isNaN(n) && n > max) max = n;
+      }
+    }
+    const seq = Math.max(s.startNumber, max + 1);
+    return base + String(seq).padStart(4, "0");
+  }
+  function hpText(v) {
+    return v.trim() ? v.trim() + " HP" : "\u2014";
+  }
+  function orDash(v) {
+    return v.trim() ? v.trim() : "\u2014";
+  }
+  function termsList(q) {
+    return q.terms.split("\n").map((t) => t.trim()).filter(Boolean).map((t) => t.split("{validity}").join(String(q.validity)));
+  }
+  function blankQuotation(s, quotes, sample) {
+    const date = todayISO();
+    const q = {
+      id: uid(),
+      number: nextNumber(quotes, s, date),
+      date,
+      validity: s.validityDays,
+      validUntil: addDays(date, s.validityDays),
+      status: "Draft",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      total: 0,
+      customer: { name: "", mobile: "", address: "", district: "", pincode: "" },
+      pump: { company: "", hp: "" },
+      panel: { company: "", wattage: "", qty: "", kw: "", kwManual: false },
+      drive: { company: "", hp: "", kw: "" },
+      structure: { type: "GI Structure", mode: "Included" },
+      installation: "Included",
+      transportation: "Included",
+      price: "",
+      warranty: { pump: s.warrantyPump, panel: s.warrantyPanel, drive: s.warrantyDrive },
+      terms: s.terms
+    };
+    if (sample) {
+      q.customer = { name: "Sample Farmer", mobile: "9876543210", address: "", district: "Coimbatore", pincode: "" };
+      q.pump = { company: "CRI", hp: "5" };
+      q.panel = { company: "Adani", wattage: "620", qty: "9", kw: autoKw("620", "9"), kwManual: false };
+      q.drive = { company: "INVT", hp: "5", kw: "4" };
+      q.price = "100000";
+    }
+    return q;
+  }
+  function validate(q, s) {
+    const e = {};
+    if (!q.customer.name.trim()) e["customer.name"] = "Enter the customer name";
+    if (!q.customer.mobile.trim()) e["customer.mobile"] = "Enter the mobile number";
+    else if (!normMobile(q.customer.mobile)) e["customer.mobile"] = "Enter a valid 10-digit mobile number";
+    if (q.customer.pincode.trim() && !/^\d{6}$/.test(q.customer.pincode.trim())) e["customer.pincode"] = "Pincode must be 6 digits";
+    if (!q.pump.company.trim()) e["pump.company"] = "Enter the pump company";
+    if (!q.pump.hp.trim()) e["pump.hp"] = "Enter the pump capacity";
+    else if (!(num(q.pump.hp) > 0)) e["pump.hp"] = "Must be greater than 0";
+    if (!q.panel.company.trim()) e["panel.company"] = "Enter the panel company";
+    if (!q.panel.wattage.trim()) e["panel.wattage"] = "Enter the panel wattage";
+    else if (!(num(q.panel.wattage) > 0)) e["panel.wattage"] = "Must be greater than 0";
+    if (!q.panel.qty.trim()) e["panel.qty"] = "Enter the number of panels";
+    else if (!(num(q.panel.qty) > 0) || !Number.isInteger(num(q.panel.qty))) e["panel.qty"] = "Must be a whole number above 0";
+    if (q.panel.kw.trim() && !(num(q.panel.kw) > 0)) e["panel.kw"] = "Must be greater than 0";
+    if (!q.drive.company.trim()) e["drive.company"] = "Enter the drive company";
+    if (!q.price.trim()) e["price"] = "Enter the project price";
+    else if (!(num(q.price) > 0)) e["price"] = "Price must be greater than 0";
+    else {
+      const c = calc(q.price, s);
+      if (c.gst < 0 || c.total < 0 || !isFinite(c.total)) e["price"] = "GST calculation is invalid \u2013 check GST settings";
+    }
+    return e;
+  }
+  function waMessage(q, s, c) {
+    const dec = decFor([c.total]);
+    const kw = q.panel.kw.trim() ? q.panel.kw.trim() + " kW" : "-";
+    return "Dear " + q.customer.name.trim() + ",\n\nThank you for considering " + s.companyName + " for your Solar Agriculture Pump project.\n\nPump Capacity: " + q.pump.hp.trim() + " HP\nSolar Capacity: " + kw + "\n\nQuotation Total: " + money(c.total, dec, s.numFormat) + "\n\nPayment Terms:\n80% Advance\n20% Balance after Installation\n\nFor more details:\n" + s.companyName + "\n" + s.phone;
+  }
+  async function buildPdf(node, title) {
+    const w = window;
+    if (!w.html2canvas || !w.jspdf) throw new Error("PDF libraries did not load. Check your internet connection.");
+    const canvas = await w.html2canvas(node, {
+      scale: 3,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      logging: false,
+      onclone: (doc) => {
+        const el = doc.getElementById("print-root");
+        if (el) {
+          el.style.position = "static";
+          el.style.left = "0";
+        }
+      }
+    });
+    const img = canvas.toDataURL("image/jpeg", 0.95);
+    const pdf = new w.jspdf.jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
+    pdf.addImage(img, "JPEG", 0, 0, 210, 297);
+    pdf.setProperties({ title });
+    return pdf.output("arraybuffer");
+  }
+  async function deliverFile(filename, data, mime) {
+    const w = window;
+    try {
+      const dl = w.claude && w.claude.use ? await w.claude.use("downloads") : null;
+      if (dl) {
+        await dl.save({ filename, data });
+        return "saved";
+      }
+    } catch (err) {
+      if (err && err.code === "declined") return "declined";
+    }
+    const blob = new Blob([data], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4e3);
+    return "saved";
+  }
+  function pdfFileName(q) {
+    const n = q.number.split("/").join("-");
+    const c = q.customer.name.trim().replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 30);
+    return n + (c ? "_" + c : "") + ".pdf";
+  }
+  var ICONS = {
+    plus: "M12 5v14M5 12h14",
+    list: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01",
+    search: "M20 20l-3.5-3.5M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14z",
+    settings: "M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
+    print: "M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z",
+    download: "M12 3v12M7 10l5 5 5-5M4 21h16",
+    chat: "M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z",
+    copy: "M9 9h11v11H9zM5 15V4h11",
+    trash: "M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14",
+    edit: "M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z",
+    save: "M5 3h11l3 3v15H5zM8 3v6h8V3M8 21v-7h8v7",
+    back: "M19 12H5M12 19l-7-7 7-7",
+    home: "M3 11l9-8 9 8M5 10v10h14V10",
+    eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+    form: "M5 3h14v18H5zM9 8h6M9 12h6M9 16h4",
+    warn: "M12 3l10 18H2zM12 10v5M12 18h.01"
+  };
+  function Ic({ n, size = 18 }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", style: { flexShrink: 0 }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("path", { d: ICONS[n] }) });
+  }
+  function Card({ title, children, right }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", { className: "card p-4 sm:p-5", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center justify-between gap-3 mb-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", { className: "sec-title", children: title }),
+        right
+      ] }),
+      children
+    ] });
+  }
+  function TF(p) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "block " + (p.className || ""), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "lbl", children: [
+        p.label,
+        p.req && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "req", children: " *" })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { className: "relative block", children: [
+        p.prefix && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "fix left-3", children: p.prefix }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          "input",
+          {
+            className: "inp" + (p.err ? " inp-err" : ""),
+            style: { paddingLeft: p.prefix ? 30 : void 0, paddingRight: p.suffix ? 44 : void 0 },
+            value: p.value,
+            onChange: (e) => p.onChange(e.target.value),
+            onBlur: p.onBlur,
+            placeholder: p.placeholder,
+            inputMode: p.inputMode,
+            maxLength: p.maxLength,
+            autoComplete: "off"
+          }
+        ),
+        p.suffix && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "fix right-3", children: p.suffix })
+      ] }),
+      p.hint && !p.err && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "hint", children: p.hint }),
+      p.err && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { "data-err": "1", className: "err", children: p.err })
+    ] });
+  }
+  function SelectField({ label, value, onChange, options, className }) {
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "block " + (className || ""), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "lbl", children: label }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { className: "inp", value, onChange: (e) => onChange(e.target.value), children: options.map((o) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: o, children: o }, o)) })
+    ] });
+  }
+  function Sheet({ q, s, c }) {
+    const dec = decFor([c.price, c.gst, c.total, c.advance, c.balance]);
+    const m = (n) => money(n, dec, s.numFormat);
+    const kw = q.panel.kw.trim() ? q.panel.kw.trim() + " kW" : "\u2014";
+    const driveCap = (q.drive.hp.trim() ? q.drive.hp.trim() + " HP" : "\u2014") + (q.drive.kw.trim() ? " / " + q.drive.kw.trim() + " kW" : "");
+    const left = [
+      ["Pump Company", orDash(q.pump.company)],
+      ["Pump Capacity", hpText(q.pump.hp)],
+      ["Panel Company", orDash(q.panel.company)],
+      ["Panel Wattage", q.panel.wattage.trim() ? q.panel.wattage.trim() + " W" : "\u2014"],
+      ["Number of Panels", orDash(q.panel.qty)],
+      ["Solar Capacity", kw]
+    ];
+    const right = [
+      ["Drive Company", orDash(q.drive.company)],
+      ["Drive Capacity", driveCap],
+      ["Structure", orDash(q.structure.type) + " (" + q.structure.mode + ")"],
+      ["Installation", q.installation],
+      ["Transportation", q.transportation]
+    ];
+    const cu = q.customer;
+    const terms = termsList(q);
+    const contact = [];
+    if (s.address.trim()) contact.push(s.address.trim());
+    if (s.phone.trim()) contact.push("Phone: " + s.phone.trim());
+    if (s.email.trim()) contact.push("Email: " + s.email.trim());
+    if (s.gstin.trim()) contact.push("GSTIN: " + s.gstin.trim());
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sheet", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sh-top", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sh-brand", children: [
+          s.logo && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { className: "sh-logo", src: s.logo, alt: "" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sh-name", children: s.companyName }),
+            s.unitLine.trim() && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sh-unit", children: s.unitLine })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sh-contact", children: contact.map((l, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: l }, i)) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sh-title", children: "SOLAR AGRICULTURE PUMP QUOTATION" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sh-meta", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "Quotation No." }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: q.number })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "Date" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: fmtDate(q.date) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "Valid Until" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: fmtDate(q.validUntil) })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sh-body", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sec-h", children: "Customer" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "cust", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "Customer Name" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: orDash(cu.name) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "Mobile" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: cu.mobile.trim() ? showMobile(cu.mobile) : "\u2014" })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "span2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "Address" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: orDash(cu.address) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "District" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: orDash(cu.district) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "k", children: "Pincode" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "v", children: orDash(cu.pincode) })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sec-h", children: "System Details" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "two", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "tb", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Description" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Details" })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: left.map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: k }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "b", children: v })
+              ] }, k)) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "tb", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Description" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Details" })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: right.map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: k }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "b", children: v })
+              ] }, k)) })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "two", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sec-h", children: "Price Summary" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "tb", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Description" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "r", children: "Amount" })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: "Price" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r b", children: m(c.price) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: "GST" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r b", children: m(c.gst) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { className: "tot", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: "TOTAL" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r", children: m(c.total) })
+                ] })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sec-h", children: "Payment Terms" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "tb", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Payment" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "r", children: "%" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "r", children: "Amount" })
+              ] }) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", { children: [
+                    "Advance",
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "cap", children: "Before material procurement / commencement of work" })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r", children: "80%" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r b", children: m(c.advance) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", { children: [
+                    "Balance after Installation",
+                    /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "cap", children: "After installation and commissioning" })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r", children: "20%" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r b", children: m(c.balance) })
+                ] }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { className: "sum", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: "Total" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r", children: "100%" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "r", children: m(c.total) })
+                ] })
+              ] })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sec-h", children: "Warranty" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "tb", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Product" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Warranty" })
+            ] }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tbody", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: "Solar Pump" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "b", children: orDash(q.warranty.pump) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: "Solar Panels" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "b", children: orDash(q.warranty.panel) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: "Solar Drive" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "b", children: orDash(q.warranty.drive) })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "note", children: "Warranty is subject to respective manufacturer's terms and conditions." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sec-h", children: "Terms & Conditions" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "terms", children: terms.map((t, i) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "t", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+              i + 1,
+              "."
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: t })
+          ] }, i)) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "sign", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "fo", children: [
+            "For ",
+            s.companyName
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "line", children: "Authorized Signatory" })
+        ] }) })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "sh-foot", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("b", { children: [
+            s.companyName,
+            " | Solar Agriculture Pump Solutions"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+            s.address.trim() ? s.address.trim() : "",
+            s.phone.trim() ? "  |  Phone: " + s.phone.trim() : ""
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { children: "Page 1" })
+      ] })
+    ] });
+  }
+  function Scaled({ children }) {
+    const ref = (0, import_react.useRef)(null);
+    const [w, setW] = (0, import_react.useState)(0);
+    (0, import_react.useLayoutEffect)(() => {
+      const el = ref.current;
+      if (!el) return;
+      setW(el.clientWidth);
+      if (typeof ResizeObserver === "undefined") return;
+      const ro = new ResizeObserver(() => setW(el.clientWidth));
+      ro.observe(el);
+      return () => ro.disconnect();
+    }, []);
+    const scale = w ? Math.min(1, w / 794) : 0.5;
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { ref, className: "w-full", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "paper-frame", style: { width: 794 * scale, height: 1123 * scale, margin: "0 auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { style: { width: 794, height: 1123, transform: "scale(" + scale + ")", transformOrigin: "top left" }, children }) }) });
+  }
+  function Editor(props) {
+    const { settings, toast } = props;
+    const [q, setQRaw] = (0, import_react.useState)(props.initial);
+    const [saved, setSaved] = (0, import_react.useState)(props.exists);
+    const [dirty, setDirty] = (0, import_react.useState)(false);
+    const [touched, setTouched] = (0, import_react.useState)({});
+    const [attempted, setAttempted] = (0, import_react.useState)(false);
+    const [tab, setTab] = (0, import_react.useState)("form");
+    const [busy, setBusy] = (0, import_react.useState)(false);
+    const [wa, setWa] = (0, import_react.useState)(null);
+    const [overflow, setOverflow] = (0, import_react.useState)(false);
+    const [confirmBack, setConfirmBack] = (0, import_react.useState)(false);
+    const [sampleOn, setSampleOn] = (0, import_react.useState)(false);
+    const setQ = (fn) => {
+      setQRaw(fn);
+      setDirty(true);
+    };
+    const errors = (0, import_react.useMemo)(() => validate(q, settings), [q, settings]);
+    const c = (0, import_react.useMemo)(() => calc(q.price, settings), [q.price, settings]);
+    const shown = (k) => attempted || touched[k] ? errors[k] : void 0;
+    const blur = (k) => () => setTouched((t) => ({ ...t, [k]: true }));
+    const upd = (sec, key, v) => setQ((p) => ({ ...p, [sec]: { ...p[sec], [key]: v } }));
+    const updPanel = (key, v) => setQ((p) => {
+      const panel = { ...p.panel, [key]: v };
+      if (key === "kw") {
+        panel.kwManual = v.trim() !== "";
+        if (!panel.kwManual) panel.kw = autoKw(panel.wattage, panel.qty);
+      } else if ((key === "wattage" || key === "qty") && !panel.kwManual) {
+        panel.kw = autoKw(panel.wattage, panel.qty);
+      }
+      return { ...p, panel };
+    });
+    const resetKw = () => setQ((p) => ({ ...p, panel: { ...p.panel, kwManual: false, kw: autoKw(p.panel.wattage, p.panel.qty) } }));
+    (0, import_react.useEffect)(() => {
+      const t = setTimeout(() => {
+        const b = document.querySelector("#print-root .sh-body");
+        if (b) setOverflow(b.scrollHeight > b.clientHeight + 1);
+      }, 60);
+      return () => clearTimeout(t);
+    }, [q, settings]);
+    const ensureValid = () => {
+      setAttempted(true);
+      if (Object.keys(errors).length) {
+        setTab("form");
+        toast("Please fix the highlighted fields", "err");
+        setTimeout(() => {
+          const el = document.querySelector('[data-err="1"]');
+          if (el && el.scrollIntoView) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 120);
+        return false;
+      }
+      return true;
+    };
+    const persist = () => {
+      const s = props.onSave({ ...q, total: c.total, updatedAt: Date.now() });
+      setQRaw(s);
+      setSaved(true);
+      setDirty(false);
+      return s;
+    };
+    const nextFrame = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 40)));
+    const doSave = () => {
+      if (!ensureValid()) return;
+      const s = persist();
+      toast("Saved " + s.number);
+    };
+    const doPrint = async () => {
+      if (!ensureValid()) return;
+      persist();
+      await nextFrame();
+      try {
+        window.print();
+      } catch (e) {
+        toast("Printing is not available here \u2013 use Download PDF instead", "err");
+      }
+    };
+    const doPdf = async () => {
+      if (!ensureValid()) return;
+      const s = persist();
+      setBusy(true);
+      try {
+        await nextFrame();
+        const node = document.querySelector("#print-root .sheet");
+        if (!node) throw new Error("Quotation sheet not found");
+        const buf = await buildPdf(node, s.number + " - " + s.customer.name);
+        const r = await deliverFile(pdfFileName(s), buf, "application/pdf");
+        if (r === "saved") toast("PDF ready: " + pdfFileName(s));
+        else toast("Download cancelled");
+      } catch (e) {
+        toast("Could not create the PDF: " + (e && e.message ? e.message : "unknown error"), "err");
+      } finally {
+        setBusy(false);
+      }
+    };
+    const doWhatsApp = () => {
+      if (!ensureValid()) return;
+      const s = persist();
+      const cc = calc(s.price, settings);
+      const msg = waMessage(s, settings, cc);
+      const url = "https://wa.me/91" + normMobile(s.customer.mobile) + "?text=" + encodeURIComponent(msg);
+      let w = null;
+      try {
+        w = window.open(url, "_blank");
+      } catch (e) {
+        w = null;
+      }
+      if (w) {
+        try {
+          w.opener = null;
+        } catch (e) {
+        }
+      } else {
+        setWa({ msg, url });
+      }
+    };
+    const copyText = async (text) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast("Message copied");
+      } catch (e) {
+        const ta = document.getElementById("wa-text");
+        if (ta) {
+          ta.select();
+          try {
+            document.execCommand("copy");
+            toast("Message copied");
+            return;
+          } catch (e2) {
+          }
+        }
+        toast("Select the text and copy it manually", "err");
+      }
+    };
+    const goBack = () => {
+      if (dirty && !confirmBack) {
+        setConfirmBack(true);
+        toast("You have unsaved changes \u2013 press Back again to discard them");
+        setTimeout(() => setConfirmBack(false), 4e3);
+        return;
+      }
+      props.onBack();
+    };
+    const loadSample = () => {
+      const sm = blankQuotation(settings, [], true);
+      setQ((p) => ({ ...p, customer: sm.customer, pump: sm.pump, panel: sm.panel, drive: sm.drive, price: sm.price }));
+      setSampleOn(true);
+    };
+    const clearForm = () => {
+      const bl = blankQuotation(settings, [], false);
+      setQ((p) => ({ ...p, customer: bl.customer, pump: bl.pump, panel: bl.panel, drive: bl.drive, price: "" }));
+      setTouched({});
+      setAttempted(false);
+      setSampleOn(false);
+    };
+    const printRoot = document.getElementById("print-root");
+    const dec = decFor([c.price, c.gst, c.total, c.advance, c.balance]);
+    const m = (n) => money(n, dec, settings.numFormat);
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pb-28", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-3 mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center gap-3 min-w-0", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-ghost", onClick: goBack, "aria-label": "Back", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "back" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "hidden sm:inline", children: "Back" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-w-0", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "page-title truncate", children: saved ? "Edit Quotation" : "New Quotation" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-sm muted truncate", children: [
+              q.number,
+              " \xB7 ",
+              fmtDate(q.date),
+              " \xB7 Valid until ",
+              fmtDate(q.validUntil)
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "flex items-center gap-2 text-sm", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "muted", children: "Status" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { className: "inp !w-auto !py-2 st st-" + q.status, value: q.status, onChange: (e) => setQ((p) => ({ ...p, status: e.target.value })), children: STATUSES.map((s) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: s, children: s }, s)) })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-wrap gap-2 mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-outline", onClick: doPrint, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "print" }),
+          " Print Quotation"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-outline", onClick: doWhatsApp, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "chat" }),
+          " Share on WhatsApp"
+        ] }),
+        saved && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-outline", onClick: () => props.onDuplicate(q), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "copy" }),
+          " Duplicate Quotation"
+        ] }),
+        !saved && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "btn btn-ghost", onClick: sampleOn || q.customer.name ? clearForm : loadSample, children: sampleOn || q.customer.name ? "Clear form" : "Load sample data" })
+      ] }),
+      overflow && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "banner banner-warn mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "warn" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "The quotation is longer than one A4 page. Shorten the terms or long text fields so the PDF stays on a single page." })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "lg:hidden mb-4 grid grid-cols-2 gap-2 seg", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: tab === "form" ? "on" : "", onClick: () => setTab("form"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "form" }),
+          " Form"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: tab === "preview" ? "on" : "", onClick: () => setTab("preview"), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "eye" }),
+          " Preview"
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-6 lg:grid-cols-[minmax(0,1fr)_400px] xl:grid-cols-[minmax(0,1fr)_520px] items-start", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: (tab === "form" ? "block" : "hidden") + " lg:block space-y-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { title: "Customer", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Customer Name", req: true, value: q.customer.name, onChange: (v) => upd("customer", "name", v), err: shown("customer.name"), onBlur: blur("customer.name") }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Mobile Number", req: true, inputMode: "tel", maxLength: 15, value: q.customer.mobile, onChange: (v) => upd("customer", "mobile", v), err: shown("customer.mobile"), onBlur: blur("customer.mobile"), placeholder: "10-digit mobile" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { className: "sm:col-span-2", label: "Address", value: q.customer.address, onChange: (v) => upd("customer", "address", v) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "District", value: q.customer.district, onChange: (v) => upd("customer", "district", v) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Pincode", inputMode: "numeric", maxLength: 6, value: q.customer.pincode, onChange: (v) => upd("customer", "pincode", v), err: shown("customer.pincode"), onBlur: blur("customer.pincode") })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { title: "Pump", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Company / Brand", req: true, value: q.pump.company, onChange: (v) => upd("pump", "company", v), err: shown("pump.company"), onBlur: blur("pump.company"), placeholder: "e.g. CRI" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Capacity", req: true, inputMode: "decimal", suffix: "HP", value: q.pump.hp, onChange: (v) => upd("pump", "hp", v), err: shown("pump.hp"), onBlur: blur("pump.hp") })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { title: "Solar Panel", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-2", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Company / Brand", req: true, value: q.panel.company, onChange: (v) => updPanel("company", v), err: shown("panel.company"), onBlur: blur("panel.company"), placeholder: "e.g. Adani" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Wattage", req: true, inputMode: "numeric", suffix: "W", value: q.panel.wattage, onChange: (v) => updPanel("wattage", v), err: shown("panel.wattage"), onBlur: blur("panel.wattage") }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Number of Panels", req: true, inputMode: "numeric", value: q.panel.qty, onChange: (v) => updPanel("qty", v), err: shown("panel.qty"), onBlur: blur("panel.qty") }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+                TF,
+                {
+                  label: "Total Solar Capacity",
+                  inputMode: "decimal",
+                  suffix: "kW",
+                  value: q.panel.kw,
+                  onChange: (v) => updPanel("kw", v),
+                  err: shown("panel.kw"),
+                  onBlur: blur("panel.kw"),
+                  hint: q.panel.kwManual ? "Manually set" : "Calculated automatically (wattage \xD7 panels \xF7 1000)"
+                }
+              )
+            ] }),
+            q.panel.kwManual && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "link mt-2", onClick: resetKw, children: "Reset to automatic value" })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { title: "Drive", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Company / Brand", req: true, value: q.drive.company, onChange: (v) => upd("drive", "company", v), err: shown("drive.company"), onBlur: blur("drive.company"), placeholder: "e.g. INVT" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Capacity", inputMode: "decimal", suffix: "HP", value: q.drive.hp, onChange: (v) => upd("drive", "hp", v) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Capacity", inputMode: "decimal", suffix: "kW", value: q.drive.kw, onChange: (v) => upd("drive", "kw", v) })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { title: "Project", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Structure Type", value: q.structure.type, onChange: (v) => upd("structure", "type", v), placeholder: "e.g. GI Structure" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectField, { label: "Structure", value: q.structure.mode, onChange: (v) => upd("structure", "mode", v), options: ["Included", "Extra"] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectField, { label: "Installation", value: q.installation, onChange: (v) => setQ((p) => ({ ...p, installation: v })), options: ["Included", "Extra"] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectField, { label: "Transportation", value: q.transportation, onChange: (v) => setQ((p) => ({ ...p, transportation: v })), options: ["Included", "Extra"] })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { title: "Price", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Project Price (before GST)", req: true, inputMode: "decimal", prefix: "\u20B9", value: q.price, onChange: (v) => setQ((p) => ({ ...p, price: v.replace(/[^0-9.,]/g, "") })), err: shown("price"), onBlur: blur("price"), placeholder: "0" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mt-4 rounded-xl p-3 sm:p-4 summary", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between py-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "muted", children: "Price" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "font-semibold", children: m(c.price) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between py-1", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "muted", children: "GST" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "font-semibold", children: m(c.gst) })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between items-baseline pt-2 mt-1 border-t bd", children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "font-bold", children: "TOTAL" }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "text-2xl font-extrabold accent", children: m(c.total) })
+              ] })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { title: "Payment", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-2 sm:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "summary rounded-xl p-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-sm", children: "80% Advance" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-lg font-bold", children: m(c.advance) })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "summary rounded-xl p-3", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-sm", children: "20% Balance after Installation" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-lg font-bold", children: m(c.balance) })
+            ] })
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { title: "Warranty", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-3", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Solar Pump", value: q.warranty.pump, onChange: (v) => upd("warranty", "pump", v) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Solar Panels", value: q.warranty.panel, onChange: (v) => upd("warranty", "panel", v) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Solar Drive", value: q.warranty.drive, onChange: (v) => upd("warranty", "drive", v) })
+          ] }) })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: (tab === "preview" ? "block" : "hidden") + " lg:block lg:sticky lg:top-20", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-sm mb-2 hidden lg:block", children: "Live preview (A4)" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Scaled, { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sheet, { q, s: settings, c }) })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "actionbar", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-6xl mx-auto px-4 flex gap-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-outline flex-1 justify-center", onClick: doSave, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "save" }),
+          " Save"
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-primary flex-1 justify-center", onClick: doPdf, disabled: busy, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "download" }),
+          " ",
+          busy ? "Preparing\u2026" : "Download PDF"
+        ] })
+      ] }) }),
+      printRoot && (0, import_react_dom.createPortal)(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Sheet, { q, s: settings, c }), printRoot),
+      wa && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "modal-bg", onClick: () => setWa(null), children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "modal card p-5", onClick: (e) => e.stopPropagation(), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", { className: "sec-title mb-2", children: "Share on WhatsApp" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "muted text-sm mb-3", children: "WhatsApp could not be opened from here. Copy the message below and send it to the customer, or open WhatsApp directly." }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { id: "wa-text", className: "inp", rows: 12, readOnly: true, value: wa.msg }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-wrap gap-2 mt-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-primary", onClick: () => copyText(wa.msg), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "copy" }),
+            " Copy message"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", { className: "btn btn-outline", href: wa.url, target: "_blank", rel: "noopener noreferrer", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "chat" }),
+            " Open WhatsApp"
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "btn btn-ghost", onClick: () => setWa(null), children: "Close" })
+        ] })
+      ] }) })
+    ] });
+  }
+  function Dashboard(props) {
+    const [term, setTerm] = (0, import_react.useState)("");
+    const month = todayISO().slice(0, 7);
+    const stats = [
+      ["Total Quotations", props.quotes.length],
+      ["This Month", props.quotes.filter((x) => x.date.startsWith(month)).length],
+      ["Accepted", props.quotes.filter((x) => x.status === "Accepted").length],
+      ["Pending", props.quotes.filter((x) => x.status === "Draft" || x.status === "Sent").length]
+    ];
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "page-title mb-1", children: "Solar Pump Quotations" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "muted mb-5", children: "Customer \u2192 Pump \u2192 Panel \u2192 Drive \u2192 Price \u2192 Quotation" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6", children: stats.map(([k, v]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "card p-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "text-3xl font-extrabold accent", children: v }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-sm", children: k })
+      ] }, k)) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-4 sm:grid-cols-2", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "tile tile-primary", onClick: props.onNew, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "plus", size: 26 }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tile-t", children: "New Quotation" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tile-s", children: "Create a quotation in under 2 minutes" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "tile", onClick: () => props.go({ name: "list", query: "" }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "list", size: 26 }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tile-t", children: "Saved Quotations" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tile-s", children: "Open, edit, duplicate or update status" })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "tile", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "search", size: 26 }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tile-t", children: "Search Quotations" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(
+            "form",
+            {
+              className: "flex gap-2 w-full mt-1",
+              onSubmit: (e) => {
+                e.preventDefault();
+                props.go({ name: "list", query: term });
+              },
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "inp", placeholder: "Number, name or mobile", value: term, onChange: (e) => setTerm(e.target.value) }),
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "btn btn-primary", type: "submit", children: "Go" })
+              ]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "tile", onClick: () => props.go({ name: "settings" }), children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "settings", size: 26 }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tile-t", children: "Settings" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "tile-s", children: "Company, numbering, warranty, terms, GST" })
+        ] })
+      ] })
+    ] });
+  }
+  function ListView(props) {
+    const [query, setQuery] = (0, import_react.useState)(props.initialQuery);
+    const [confirmDel, setConfirmDel] = (0, import_react.useState)(null);
+    const t = query.trim().toLowerCase();
+    const digits = t.replace(/\D/g, "");
+    const rows = props.quotes.filter((x) => {
+      if (!t) return true;
+      return x.number.toLowerCase().includes(t) || x.customer.name.toLowerCase().includes(t) || digits.length > 0 && x.customer.mobile.replace(/\D/g, "").includes(digits);
+    }).sort((a, b) => b.createdAt - a.createdAt);
+    const money0 = (n) => money(n, decFor([n]), props.settings.numFormat);
+    const askDelete = (id) => {
+      if (confirmDel === id) {
+        props.onDelete(id);
+        setConfirmDel(null);
+      } else {
+        setConfirmDel(id);
+        setTimeout(() => setConfirmDel((c) => c === id ? null : c), 4e3);
+      }
+    };
+    const StatusSel = ({ x }) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("select", { className: "inp !py-1.5 !w-auto st st-" + x.status, value: x.status, onChange: (e) => props.onStatus(x.id, e.target.value), children: STATUSES.map((s) => /* @__PURE__ */ (0, import_jsx_runtime.jsx)("option", { value: s, children: s }, s)) });
+    const Actions = ({ x }) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex gap-1.5 flex-wrap", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-outline btn-sm", onClick: () => props.onOpen(x), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "edit", size: 15 }),
+        " Edit"
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-outline btn-sm", onClick: () => props.onDuplicate(x), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "copy", size: 15 }),
+        " Duplicate"
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-sm " + (confirmDel === x.id ? "btn-danger" : "btn-outline"), onClick: () => askDelete(x.id), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "trash", size: 15 }),
+        " ",
+        confirmDel === x.id ? "Confirm?" : "Delete"
+      ] })
+    ] });
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex flex-wrap items-center justify-between gap-3 mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "page-title", children: "Saved Quotations" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-primary", onClick: props.onNew, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "plus" }),
+          " New Quotation"
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "relative mb-4", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "absolute left-3 top-1/2 -translate-y-1/2 muted", children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "search" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { className: "inp", style: { paddingLeft: 40 }, placeholder: "Search by quotation number, customer name or mobile", value: query, onChange: (e) => setQuery(e.target.value) })
+      ] }),
+      rows.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "card p-8 text-center muted", children: props.quotes.length === 0 ? "No quotations saved yet." : "No quotation matches your search." }) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(import_jsx_runtime.Fragment, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "hidden md:block card overflow-x-auto", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", { className: "dt", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Quotation No." }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Customer" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Date" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Pump" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Panels" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Drive" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { className: "text-right", children: "Total" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", { children: "Status" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {})
+          ] }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: rows.map((x) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "font-semibold whitespace-nowrap", children: x.number }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", { children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "font-medium", children: x.customer.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-xs", children: x.customer.mobile })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "whitespace-nowrap", children: fmtDate(x.date) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", { className: "whitespace-nowrap", children: [
+              x.pump.hp,
+              " HP"
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("td", { className: "whitespace-nowrap", children: [
+              x.panel.company,
+              x.panel.kw ? " \xB7 " + x.panel.kw + " kW" : ""
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: x.drive.company }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { className: "text-right font-semibold whitespace-nowrap", children: money0(x.total) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusSel, { x }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Actions, { x }) })
+          ] }, x.id)) })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "md:hidden space-y-3", children: rows.map((x) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "card p-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex justify-between gap-2 items-start", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "min-w-0", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "font-semibold", children: x.customer.name }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-sm", children: x.customer.mobile })
+            ] }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-right", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "font-bold accent", children: money0(x.total) }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-xs", children: fmtDate(x.date) })
+            ] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "muted text-sm mt-2", children: x.number }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "text-sm mt-1", children: [
+            x.pump.hp,
+            " HP pump \xB7 ",
+            x.panel.company,
+            x.panel.kw ? " " + x.panel.kw + " kW" : "",
+            " \xB7 ",
+            x.drive.company
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex items-center justify-between gap-2 mt-3 flex-wrap", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(StatusSel, { x }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Actions, { x })
+          ] })
+        ] }, x.id)) })
+      ] })
+    ] });
+  }
+  function readLogo(file) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onerror = () => reject(new Error("Could not read the image"));
+      fr.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error("This file is not a valid image"));
+        img.onload = () => {
+          const max = 360;
+          const r = Math.min(1, max / Math.max(img.width, img.height));
+          const cv = document.createElement("canvas");
+          cv.width = Math.max(1, Math.round(img.width * r));
+          cv.height = Math.max(1, Math.round(img.height * r));
+          const ctx = cv.getContext("2d");
+          if (!ctx) return reject(new Error("Canvas not supported"));
+          ctx.drawImage(img, 0, 0, cv.width, cv.height);
+          resolve(cv.toDataURL("image/png"));
+        };
+        img.src = String(fr.result);
+      };
+      fr.readAsDataURL(file);
+    });
+  }
+  function SettingsView(props) {
+    const [d, setD] = (0, import_react.useState)(props.settings);
+    const [f, setF] = (0, import_react.useState)({
+      startNumber: String(props.settings.startNumber),
+      validityDays: String(props.settings.validityDays),
+      goodsPct: String(props.settings.goodsPct),
+      goodsGst: String(props.settings.goodsGst),
+      serviceGst: String(props.settings.serviceGst)
+    });
+    const [attempted, setAttempted] = (0, import_react.useState)(false);
+    const [confirmReset, setConfirmReset] = (0, import_react.useState)(false);
+    const set = (k, v) => setD((p) => ({ ...p, [k]: v }));
+    const setNum = (k, v) => setF((p) => ({ ...p, [k]: v }));
+    const errs = {};
+    if (!d.companyName.trim()) errs.companyName = "Enter the company name";
+    if (!d.phone.trim()) errs.phone = "Enter a phone number";
+    if (!d.prefix.trim()) errs.prefix = "Enter a prefix";
+    else if (/\s/.test(d.prefix)) errs.prefix = "No spaces allowed";
+    const sn = num(f.startNumber);
+    if (!(sn >= 1) || !Number.isInteger(sn)) errs.startNumber = "Whole number, 1 or more";
+    const vd = num(f.validityDays);
+    if (!(vd >= 1) || !Number.isInteger(vd)) errs.validityDays = "Whole number of days, 1 or more";
+    const gp = num(f.goodsPct);
+    if (!(gp >= 0 && gp <= 100)) errs.goodsPct = "Between 0 and 100";
+    const gg = num(f.goodsGst);
+    if (!(gg >= 0 && gg <= 100)) errs.goodsGst = "Between 0 and 100";
+    const sg = num(f.serviceGst);
+    if (!(sg >= 0 && sg <= 100)) errs.serviceGst = "Between 0 and 100";
+    if (!d.terms.trim()) errs.terms = "Enter at least one term";
+    const e = (k) => attempted ? errs[k] : void 0;
+    const save = () => {
+      setAttempted(true);
+      if (Object.keys(errs).length) {
+        props.toast("Please fix the highlighted fields", "err");
+        return;
+      }
+      props.onSave({ ...d, startNumber: sn, validityDays: vd, goodsPct: gp, goodsGst: gg, serviceGst: sg });
+      props.toast("Settings saved");
+    };
+    const reset = () => {
+      if (!confirmReset) {
+        setConfirmReset(true);
+        setTimeout(() => setConfirmReset(false), 4e3);
+        return;
+      }
+      setD(DEFAULT_SETTINGS);
+      setF({ startNumber: "1", validityDays: "15", goodsPct: "70", goodsGst: "5", serviceGst: "18" });
+      setConfirmReset(false);
+      props.toast("Defaults restored \u2013 press Save to apply");
+    };
+    const onLogo = async (ev) => {
+      const file = ev.target.files && ev.target.files[0];
+      if (!file) return;
+      try {
+        set("logo", await readLogo(file));
+      } catch (err) {
+        props.toast(err.message || "Could not load the logo", "err");
+      }
+      ev.target.value = "";
+    };
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "pb-28", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("h1", { className: "page-title mb-4", children: "Settings" }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "space-y-4 max-w-3xl", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { title: "Company", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Company Name", req: true, value: d.companyName, onChange: (v) => set("companyName", v), err: e("companyName") }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Line under name", value: d.unitLine, onChange: (v) => set("unitLine", v), placeholder: "A Unit of ..." }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { className: "sm:col-span-2", label: "Address", value: d.address, onChange: (v) => set("address", v) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Phone", req: true, inputMode: "tel", value: d.phone, onChange: (v) => set("phone", v), err: e("phone") }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Email", value: d.email, onChange: (v) => set("email", v) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "GSTIN", value: d.gstin, onChange: (v) => set("gstin", v.toUpperCase()), hint: "Left blank until you enter it. Shown in the quotation header only if filled." })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "mt-4 flex items-center gap-4 flex-wrap", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "logo-box", children: d.logo ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: d.logo, alt: "Logo" }) : /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "muted text-xs", children: "No logo" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "flex gap-2 flex-wrap", children: [
+              /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("label", { className: "btn btn-outline cursor-pointer", children: [
+                "Upload logo",
+                /* @__PURE__ */ (0, import_jsx_runtime.jsx)("input", { type: "file", accept: "image/*", className: "hidden", onChange: onLogo })
+              ] }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "btn btn-ghost", onClick: () => set("logo", DEFAULT_SETTINGS.logo), children: "Use default logo" }),
+              /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "btn btn-ghost", onClick: () => set("logo", ""), children: "Remove" })
+            ] })
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { title: "Quotation", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Quotation Prefix", value: d.prefix, onChange: (v) => set("prefix", v), err: e("prefix"), hint: "Numbers look like " + (d.prefix || "NSE/SP") + "/" + (/* @__PURE__ */ new Date()).getFullYear() + "/" + String(Math.max(1, sn || 1)).padStart(4, "0") }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Starting Number", inputMode: "numeric", value: f.startNumber, onChange: (v) => setNum("startNumber", v), err: e("startNumber"), hint: "Next number issued will never be lower than this" }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Default Validity (days)", inputMode: "numeric", value: f.validityDays, onChange: (v) => setNum("validityDays", v), err: e("validityDays") }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(SelectField, { label: "Amount format", value: d.numFormat, onChange: (v) => set("numFormat", v), options: ["en-IN", "en-US"] })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "hint mt-2", children: "en-IN writes 1,08,900 (lakh style). en-US writes 108,900." })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Card, { title: "Warranty (defaults for new quotations)", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-3", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Pump", value: d.warrantyPump, onChange: (v) => set("warrantyPump", v) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Panel", value: d.warrantyPanel, onChange: (v) => set("warrantyPanel", v) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Drive", value: d.warrantyDrive, onChange: (v) => set("warrantyDrive", v) })
+        ] }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { title: "Terms & Conditions", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("textarea", { className: "inp" + (e("terms") ? " inp-err" : ""), rows: 10, value: d.terms, onChange: (ev) => set("terms", ev.target.value) }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", { className: "hint mt-1", children: [
+            "One term per line. Use ",
+            "{validity}",
+            " where the number of validity days should appear. Applies to new quotations."
+          ] }),
+          e("terms") && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "err", children: e("terms") })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Card, { title: "GST (internal only)", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "grid gap-3 sm:grid-cols-2", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Goods share of project price", inputMode: "decimal", suffix: "%", value: f.goodsPct, onChange: (v) => setNum("goodsPct", v), err: e("goodsPct") }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "GST on goods", inputMode: "decimal", suffix: "%", value: f.goodsGst, onChange: (v) => setNum("goodsGst", v), err: e("goodsGst") }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "Services share (automatic)", suffix: "%", value: gp >= 0 && gp <= 100 ? String(round2(100 - gp)) : "", onChange: () => void 0 }),
+            /* @__PURE__ */ (0, import_jsx_runtime.jsx)(TF, { label: "GST on services", inputMode: "decimal", suffix: "%", value: f.serviceGst, onChange: (v) => setNum("serviceGst", v), err: e("serviceGst") })
+          ] }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", { className: "hint mt-2", children: "Default: goods 70% @ 5%, services 30% @ 18%. The customer quotation shows only Price, GST and Total \u2013 never this split." })
+        ] })
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "actionbar", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-6xl mx-auto px-4 flex gap-3", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", { className: "btn flex-1 justify-center " + (confirmReset ? "btn-danger" : "btn-outline"), onClick: reset, children: confirmReset ? "Confirm reset?" : "Reset to defaults" }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "btn btn-primary flex-1 justify-center", onClick: save, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "save" }),
+          " Save Settings"
+        ] })
+      ] }) })
+    ] });
+  }
+  function App() {
+    const storageOk = (0, import_react.useMemo)(storageWorks, []);
+    const [settings, setSettings] = (0, import_react.useState)(() => ({ ...DEFAULT_SETTINGS, ...loadJSON(KEYS.settings, {}) }));
+    const [quotes, setQuotes] = (0, import_react.useState)(() => loadJSON(KEYS.quotes, []));
+    const quotesRef = (0, import_react.useRef)(quotes);
+    quotesRef.current = quotes;
+    const [view, setView] = (0, import_react.useState)({ name: "dashboard" });
+    const [toastState, setToastState] = (0, import_react.useState)(null);
+    const toastTimer = (0, import_react.useRef)(null);
+    const toast = (msg, kind = "ok") => {
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      setToastState({ msg, kind, id: Date.now() });
+      toastTimer.current = setTimeout(() => setToastState(null), 3500);
+    };
+    const commitQuotes = (next) => {
+      quotesRef.current = next;
+      setQuotes(next);
+      if (!saveJSON(KEYS.quotes, next)) toast("Browser storage is full or blocked \u2013 changes are not being saved", "err");
+    };
+    const openNew = () => {
+      const first = quotesRef.current.length === 0;
+      setView({ name: "editor", key: uid(), initial: blankQuotation(settings, quotesRef.current, first), exists: false });
+    };
+    const openExisting = (x) => setView({ name: "editor", key: uid(), initial: x, exists: true });
+    const duplicate = (x) => {
+      const b = blankQuotation(settings, quotesRef.current, false);
+      const copy = {
+        ...b,
+        pump: { ...x.pump },
+        panel: { ...x.panel },
+        drive: { ...x.drive },
+        structure: { ...x.structure },
+        installation: x.installation,
+        transportation: x.transportation,
+        price: x.price,
+        warranty: { ...x.warranty },
+        customer: { name: "", mobile: "", address: "", district: "", pincode: "" }
+      };
+      setView({ name: "editor", key: uid(), initial: copy, exists: false });
+      toast("Duplicated \u2013 enter the new customer details");
+      window.scrollTo(0, 0);
+    };
+    const saveQuote = (qq) => {
+      const list = quotesRef.current;
+      const exists = list.some((x) => x.id === qq.id);
+      let out = qq;
+      if (!exists && list.some((x) => x.number === qq.number)) out = { ...qq, number: nextNumber(list, settings, qq.date) };
+      commitQuotes(exists ? list.map((x) => x.id === out.id ? out : x) : [out, ...list]);
+      return out;
+    };
+    const go = (v) => {
+      setView(v);
+      window.scrollTo(0, 0);
+    };
+    const nav = [
+      { id: "dashboard", label: "Home", icon: "home", on: () => go({ name: "dashboard" }) },
+      { id: "editor", label: "New", icon: "plus", on: openNew },
+      { id: "list", label: "Saved", icon: "list", on: () => go({ name: "list", query: "" }) },
+      { id: "settings", label: "Settings", icon: "settings", on: () => go({ name: "settings" }) }
+    ];
+    return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime.jsx)("header", { className: "topbar", children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "max-w-6xl mx-auto px-4 flex items-center justify-between gap-3 h-16", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "flex items-center gap-2.5 min-w-0", onClick: () => go({ name: "dashboard" }), "aria-label": "Home", children: [
+          settings.logo && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", { src: settings.logo, alt: "", className: "h-9 w-9 object-contain" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { className: "brand-name truncate", children: settings.companyName })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime.jsx)("nav", { className: "flex gap-1", children: nav.map((n) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", { className: "navbtn" + (view.name === n.id ? " on" : ""), onClick: n.on, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: n.icon, size: 18 }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: n.label })
+        ] }, n.id)) })
+      ] }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", { className: "max-w-6xl mx-auto px-4 py-5 sm:py-8", children: [
+        !storageOk && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { className: "banner banner-warn mb-4", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Ic, { n: "warn" }),
+          /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Browser storage is unavailable, so quotations will be lost when this page is closed." })
+        ] }),
+        view.name === "dashboard" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(Dashboard, { quotes, settings, go, onNew: openNew }),
+        view.name === "list" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          ListView,
+          {
+            quotes,
+            settings,
+            initialQuery: view.query,
+            onOpen: openExisting,
+            onDuplicate: duplicate,
+            onNew: openNew,
+            onDelete: (id) => {
+              commitQuotes(quotesRef.current.filter((x) => x.id !== id));
+              toast("Quotation deleted");
+            },
+            onStatus: (id, st) => commitQuotes(quotesRef.current.map((x) => x.id === id ? { ...x, status: st, updatedAt: Date.now() } : x))
+          },
+          view.query
+        ),
+        view.name === "settings" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          SettingsView,
+          {
+            settings,
+            toast,
+            onSave: (s) => {
+              setSettings(s);
+              if (!saveJSON(KEYS.settings, s)) toast("Could not save settings to browser storage", "err");
+            }
+          }
+        ),
+        view.name === "editor" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(
+          Editor,
+          {
+            initial: view.initial,
+            exists: view.exists,
+            settings,
+            onSave: saveQuote,
+            onDuplicate: duplicate,
+            onBack: () => go({ name: "list", query: "" }),
+            toast
+          },
+          view.key
+        )
+      ] }),
+      toastState && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "toast " + (toastState.kind === "err" ? "toast-err" : "toast-ok"), role: "status", children: toastState.msg }, toastState.id)
+    ] });
+  }
+  (0, import_client.createRoot)(document.getElementById("app-root")).render(/* @__PURE__ */ (0, import_jsx_runtime.jsx)(App, {}));
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "nse-solar-pump-quotation-generator",
+  "version": "1.0.0",
+  "description": "Fast, simple, professional Solar Agriculture Pump Quotation Generator for N Square Energies (a unit of ZetaCorp Solutions Pvt Ltd).",
+  "private": true,
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}
