@@ -13,7 +13,19 @@ fs.writeFileSync(path.join(shimDir, 'react-dom.js'), 'module.exports = window.Re
 fs.writeFileSync(path.join(shimDir, 'react-dom-client.js'), 'module.exports = window.ReactDOM;\n');
 fs.writeFileSync(
   path.join(shimDir, 'jsx-runtime.js'),
-  'const R = window.React;\nmodule.exports = { jsx: R.createElement, jsxs: R.createElement, Fragment: R.Fragment };\n'
+  // The automatic JSX runtime calls jsx(type, props, key): children live in
+  // props.children and the third arg is the key. React.createElement treats its
+  // third+ args as children, so it must be adapted here -- otherwise a keyed
+  // element (every list row) renders its key string in place of its children.
+  'const R = window.React;\n' +
+    'function jsx(type, config, maybeKey) {\n' +
+    '  if (maybeKey === undefined) return R.createElement(type, config);\n' +
+    '  var props = {};\n' +
+    '  for (var k in config) { if (Object.prototype.hasOwnProperty.call(config, k)) props[k] = config[k]; }\n' +
+    '  props.key = maybeKey;\n' +
+    '  return R.createElement(type, props);\n' +
+    '}\n' +
+    'module.exports = { jsx: jsx, jsxs: jsx, Fragment: R.Fragment };\n'
 );
 
 const esbuild = path.join(root, 'node_modules', '.bin', 'esbuild');

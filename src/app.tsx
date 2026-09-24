@@ -305,23 +305,95 @@ function waMessage(q: Quotation, s: Settings, c: Calc): string {
 /* =========================================================
    PDF / PRINT
    ========================================================= */
+// Wait until web fonts and every image inside the node have loaded, so the
+// capture never races ahead of content that is still painting.
+async function waitForAssets(node: HTMLElement): Promise<void> {
+  try {
+    const fonts = (document as any).fonts;
+    if (fonts && fonts.ready) await Promise.race([fonts.ready, new Promise((r) => setTimeout(r, 3000))]);
+  } catch {}
+  const imgs = Array.from(node.querySelectorAll('img'));
+  await Promise.all(
+    imgs.map(
+      (im) =>
+        (im as HTMLImageElement).complete
+          ? Promise.resolve()
+          : new Promise<void>((res) => {
+              const done = () => res();
+              im.addEventListener('load', done, { once: true });
+              im.addEventListener('error', done, { once: true });
+              setTimeout(done, 3000);
+            })
+    )
+  );
+}
+
+// Mobile browsers (notably iOS Safari) cap how large a canvas can be before it
+// silently renders blank and toDataURL() returns an empty image. Probe the
+// device with a throwaway canvas of the target size and back off until the
+// device can actually produce a real image at that size.
+function canvasWorksAt(width: number, height: number): boolean {
+  try {
+    const c = document.createElement('canvas');
+    c.width = width;
+    c.height = height;
+    const ctx = c.getContext('2d');
+    if (!ctx) return false;
+    ctx.fillStyle = '#ff0000';
+    ctx.fillRect(width - 2, height - 2, 2, 2);
+    // A blank/failed canvas reads back transparent-black at the far corner.
+    const px = ctx.getImageData(width - 1, height - 1, 1, 1).data;
+    if (px[0] < 200) return false;
+    const url = c.toDataURL('image/jpeg', 0.5);
+    return typeof url === 'string' && url.length > 1000;
+  } catch {
+    return false;
+  }
+}
+
+function pickScale(node: HTMLElement): number {
+  const w = node.offsetWidth || 794;
+  const h = node.offsetHeight || 1123;
+  for (const s of [3, 2.5, 2, 1.5, 1]) {
+    if (canvasWorksAt(Math.round(w * s), Math.round(h * s))) return s;
+  }
+  return 1;
+}
+
 async function buildPdf(node: HTMLElement, title: string): Promise<ArrayBuffer> {
   const w = window as any;
   if (!w.html2canvas || !w.jspdf) throw new Error('PDF libraries did not load. Check your internet connection.');
-  const canvas = await w.html2canvas(node, {
-    scale: 3,
-    backgroundColor: '#ffffff',
-    useCORS: true,
-    logging: false,
-    onclone: (doc: Document) => {
-      const el = doc.getElementById('print-root');
-      if (el) {
-        el.style.position = 'static';
-        el.style.left = '0';
-      }
-    },
-  });
-  const img = canvas.toDataURL('image/jpeg', 0.95);
+
+  await waitForAssets(node);
+
+  // Try progressively smaller scales; if a device produces a blank capture at
+  // one scale, drop down and retry rather than handing back an empty PDF.
+  let scale = pickScale(node);
+  let img = '';
+  for (; scale >= 1; scale -= scale > 2 ? 1 : 0.5) {
+    const canvas = await w.html2canvas(node, {
+      scale,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      imageTimeout: 15000,
+      logging: false,
+      onclone: (doc: Document) => {
+        const el = doc.getElementById('print-root');
+        if (el) {
+          el.style.position = 'static';
+          el.style.left = '0';
+        }
+      },
+    });
+    const candidate = canvas.toDataURL('image/jpeg', 0.95);
+    // 'data:,' or a suspiciously tiny string means the device failed to render.
+    if (candidate && candidate.length > 5000) {
+      img = candidate;
+      break;
+    }
+  }
+  if (!img) throw new Error('The device could not render the quotation image. Try Print instead, or use a different browser.');
+
   const pdf = new w.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait', compress: true });
   pdf.addImage(img, 'JPEG', 0, 0, 210, 297);
   pdf.setProperties({ title });

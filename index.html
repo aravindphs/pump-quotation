@@ -296,11 +296,7 @@ select.inp{-webkit-appearance:none;appearance:none; background-image:url("data:i
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __commonJS = (cb, mod) => function __require() {
-    try {
-      return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-    } catch (e) {
-      throw mod = 0, e;
-    }
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
   var __copyProps = (to, from, except, desc) => {
     if (from && typeof from === "object" || typeof from === "function") {
@@ -344,7 +340,16 @@ select.inp{-webkit-appearance:none;appearance:none; background-image:url("data:i
   var require_jsx_runtime = __commonJS({
     ".shims/jsx-runtime.js"(exports, module) {
       var R = window.React;
-      module.exports = { jsx: R.createElement, jsxs: R.createElement, Fragment: R.Fragment };
+      function jsx2(type, config, maybeKey) {
+        if (maybeKey === void 0) return R.createElement(type, config);
+        var props = {};
+        for (var k in config) {
+          if (Object.prototype.hasOwnProperty.call(config, k)) props[k] = config[k];
+        }
+        props.key = maybeKey;
+        return R.createElement(type, props);
+      }
+      module.exports = { jsx: jsx2, jsxs: jsx2, Fragment: R.Fragment };
     }
   });
 
@@ -556,23 +561,77 @@ select.inp{-webkit-appearance:none;appearance:none; background-image:url("data:i
     const kw = q.panel.kw.trim() ? q.panel.kw.trim() + " kW" : "-";
     return "Dear " + q.customer.name.trim() + ",\n\nThank you for considering " + s.companyName + " for your Solar Agriculture Pump project.\n\nPump Capacity: " + q.pump.hp.trim() + " HP\nSolar Capacity: " + kw + "\n\nQuotation Total: " + money(c.total, dec, s.numFormat) + "\n\nPayment Terms:\n80% Advance\n20% Balance after Installation\n\nFor more details:\n" + s.companyName + "\n" + s.phone;
   }
+  async function waitForAssets(node) {
+    try {
+      const fonts = document.fonts;
+      if (fonts && fonts.ready) await Promise.race([fonts.ready, new Promise((r) => setTimeout(r, 3e3))]);
+    } catch {
+    }
+    const imgs = Array.from(node.querySelectorAll("img"));
+    await Promise.all(
+      imgs.map(
+        (im) => im.complete ? Promise.resolve() : new Promise((res) => {
+          const done = () => res();
+          im.addEventListener("load", done, { once: true });
+          im.addEventListener("error", done, { once: true });
+          setTimeout(done, 3e3);
+        })
+      )
+    );
+  }
+  function canvasWorksAt(width, height) {
+    try {
+      const c = document.createElement("canvas");
+      c.width = width;
+      c.height = height;
+      const ctx = c.getContext("2d");
+      if (!ctx) return false;
+      ctx.fillStyle = "#ff0000";
+      ctx.fillRect(width - 2, height - 2, 2, 2);
+      const px = ctx.getImageData(width - 1, height - 1, 1, 1).data;
+      if (px[0] < 200) return false;
+      const url = c.toDataURL("image/jpeg", 0.5);
+      return typeof url === "string" && url.length > 1e3;
+    } catch {
+      return false;
+    }
+  }
+  function pickScale(node) {
+    const w = node.offsetWidth || 794;
+    const h = node.offsetHeight || 1123;
+    for (const s of [3, 2.5, 2, 1.5, 1]) {
+      if (canvasWorksAt(Math.round(w * s), Math.round(h * s))) return s;
+    }
+    return 1;
+  }
   async function buildPdf(node, title) {
     const w = window;
     if (!w.html2canvas || !w.jspdf) throw new Error("PDF libraries did not load. Check your internet connection.");
-    const canvas = await w.html2canvas(node, {
-      scale: 3,
-      backgroundColor: "#ffffff",
-      useCORS: true,
-      logging: false,
-      onclone: (doc) => {
-        const el = doc.getElementById("print-root");
-        if (el) {
-          el.style.position = "static";
-          el.style.left = "0";
+    await waitForAssets(node);
+    let scale = pickScale(node);
+    let img = "";
+    for (; scale >= 1; scale -= scale > 2 ? 1 : 0.5) {
+      const canvas = await w.html2canvas(node, {
+        scale,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        imageTimeout: 15e3,
+        logging: false,
+        onclone: (doc) => {
+          const el = doc.getElementById("print-root");
+          if (el) {
+            el.style.position = "static";
+            el.style.left = "0";
+          }
         }
+      });
+      const candidate = canvas.toDataURL("image/jpeg", 0.95);
+      if (candidate && candidate.length > 5e3) {
+        img = candidate;
+        break;
       }
-    });
-    const img = canvas.toDataURL("image/jpeg", 0.95);
+    }
+    if (!img) throw new Error("The device could not render the quotation image. Try Print instead, or use a different browser.");
     const pdf = new w.jspdf.jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
     pdf.addImage(img, "JPEG", 0, 0, 210, 297);
     pdf.setProperties({ title });
